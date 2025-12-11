@@ -1,83 +1,213 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="light">
+<html lang="tr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muammer Altunkan Blog</title>
-      <meta name="description" content="Author: Muammer Altunkan.  Category: Blog website , technology, science, economics, finance, software, space blog page ">
-    <link rel="stylesheet" href="style.css">
+    <title>Muammer Altunkan | Blog</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-   <script type="text/javascript">
-    aclib.runAutoTag({
-        zoneId: 'lxcajagmaq',
-    });
-</script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            bg: '#0B1120',      // Çok koyu lacivert/siyah
+                            card: '#151E32',    // Kart arkaplanı
+                            border: '#2A3655',  // Sınır çizgileri
+                            text: '#94A3B8'     // Okunabilir gri metin
+                        },
+                        accent: {
+                            DEFAULT: '#38BDF8', // Açık mavi (Sky Blue)
+                            hover: '#0EA5E9'    // Hover tonu
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-    <script type="text/javascript">
-    aclib.runInterstitial({
-        zoneId: '10042890',
-    });
-</script>
-
+    <style>
+        /* Kart resimleri için aspect ratio ayarı */
+        .img-container {
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+        }
+        .img-container img {
+            transition: transform 0.5s ease;
+        }
+        .group:hover .img-container img {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <h1 class="logo">Muammer Altunkan</h1>
-                <nav>
-                    <ul>
-                        <li><a href="#" class="active">Ana Sayfa</a></li>
-                        <li><a href="#">Hakkımda</a></li>
-                        <li><a href="#">İletişim</a></li>
-                    </ul>
-                </nav>
-                <div class="header-actions">
-                    <button id="theme-toggle" aria-label="Toggle dark mode">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <button id="mobile-menu-toggle" aria-label="Toggle mobile menu">
-                        <i class="fas fa-bars"></i>
-                    </button>
+<body class="bg-dark-bg text-dark-text font-sans antialiased min-h-screen flex flex-col">
+
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-dark-border bg-dark-bg/90 backdrop-blur-md">
+        <div class="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-bold text-lg">
+                    MA
                 </div>
+                <span class="self-center text-2xl font-bold whitespace-nowrap text-white">Muammer Altunkan</span>
+            </a>
+            
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-white hover:text-accent transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                <a href="#" class="text-white hover:text-accent transition-colors"><i class="fa-brands fa-linkedin text-xl"></i></a>
+                <a href="#" class="text-white hover:text-accent transition-colors"><i class="fa-brands fa-twitter text-xl"></i></a>
             </div>
         </div>
+    </nav>
+
+    <header class="pt-32 pb-12 px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">
+            Blog & <span class="text-accent">Yazılar</span>
+        </h1>
+        <p class="text-lg max-w-2xl mx-auto text-gray-400">
+            Teknoloji, yazılım ve kişisel notlarımın bulunduğu dijital arşiv.
+        </p>
     </header>
 
-    <div class="mobile-menu" id="mobile-menu">
-        <ul>
-            <li><a href="#" class="active">Ana Sayfa</a></li>
-            <li><a href="#">Hakkımda</a></li>
-            <li><a href="#">İletişim</a></li>
-        </ul>
-    </div>
-
-    <main class="container">
-        <section class="search-section">
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Bloglarda ara...">
-                <button id="search-button"><i class="fas fa-search"></i></button>
+    <main class="flex-grow container mx-auto px-4 pb-20">
+        <div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="col-span-full text-center py-20 hidden" id="loading-msg">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-accent"></i>
+                <p class="mt-4">Yazılar yükleniyor...</p>
             </div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">Tümü</button>
-                <button class="filter-btn" data-filter="favorites">Favoriler</button>
+            
+            <div class="col-span-full text-center py-20 hidden" id="no-data-msg">
+                <i class="fa-solid fa-folder-open text-4xl text-gray-600"></i>
+                <p class="mt-4">Henüz görüntülenecek yazı bulunmamaktadır.</p>
             </div>
-        </section>
-
-        <section class="blog-posts" id="blog-posts">
-            <!-- Blog gönderileri buraya JavaScript ile eklenecek -->
-            <div class="loading">Yükleniyor...</div>
-        </section>
+        </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Muammer Altunkan. Tüm hakları saklıdır.</p>
+    <footer class="bg-dark-card border-t border-dark-border mt-auto py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">
+                &copy; <span id="year"></span> <span class="text-white font-semibold">Muammer Altunkan</span>. Tüm hakları saklıdır.
+            </p>
         </div>
     </footer>
+<hr>
+  <!-- admitad.banner: bzkgpak5ca2b427bad7516525dc3e8 AliExpress WW -->
+<a target="_blank" rel="nofollow" href="https://rzekl.com/g/bzkgpak5ca2b427bad7516525dc3e8/?i=4"><img width="216" height="54" border="0" src="https://ad.admitad.com/b/bzkgpak5ca2b427bad7516525dc3e8/" alt="AliExpress WW"/></a>
+<!-- /admitad.banner -->
+    <script>
+        // Otomatik yıl güncelleme
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-    <script src="main.js"></script>
+        /* ================================================================
+           1. VERİ KAYNAĞI (DATA SOURCE)
+           ================================================================
+           Buradaki diziyi kendi gerçek verilerinizle doldurun.
+           Eğer verileri bir API'den veya JSON dosyasından çekecekseniz,
+           aşağıdaki fetch bloğunu kullanabilirsiniz.
+        */
+
+        const blogPosts = [
+            // Örnek Veri Şablonu (Kopyalayıp çoğaltarak kullanın):
+            /*
+            {
+                title: "Buraya Başlık Gelecek",
+                description: "Buraya yazının kısa açıklaması gelecek. İçerik özeti buraya yazılır.",
+                image: "https://via.placeholder.com/600x400", // Resim URL'si
+                url: "#", // Yazının gideceği link
+                category: "Yazılım" // İsteğe bağlı
+            },
+            */
+           
+           // ŞU AN BOŞ (Sizin doldurmanız için)
+           // Test etmek isterseniz yukarıdaki yorum satırını açın veya aşağıya obje ekleyin.
+        ];
+
+        /* ================================================================
+           2. RENDER FONKSİYONU
+           ================================================================
+        */
+        const blogGrid = document.getElementById('blog-grid');
+        const noDataMsg = document.getElementById('no-data-msg');
+
+        function renderPosts(posts) {
+            blogGrid.innerHTML = ''; // Önce temizle
+
+            if (posts.length === 0) {
+                blogGrid.appendChild(noDataMsg);
+                noDataMsg.classList.remove('hidden');
+                return;
+            }
+
+            posts.forEach(post => {
+                // HTML Kart Yapısı
+                const cardHTML = `
+                    <article class="group bg-dark-card border border-dark-border rounded-2xl overflow-hidden hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300 flex flex-col h-full">
+                        
+                        <div class="img-container relative w-full bg-gray-800">
+                             ${post.image ? `<img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-600"><i class="fa-solid fa-image text-3xl"></i></div>'}
+                             
+                             <div class="absolute top-4 right-4 bg-dark-bg/80 backdrop-blur text-xs font-bold px-3 py-1 rounded-full border border-dark-border text-white">
+                                <i class="fa-solid fa-link mr-1 text-accent"></i> Kaynak
+                             </div>
+                        </div>
+
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h2 class="text-xl font-bold text-white mb-3 group-hover:text-accent transition-colors line-clamp-2">
+                                ${post.title}
+                            </h2>
+                            
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3 flex-grow">
+                                ${post.description}
+                            </p>
+                            
+                            <div class="mt-auto pt-4 border-t border-dark-border/50">
+                                <a href="${post.url}" target="_blank" class="inline-flex items-center text-sm font-semibold text-white hover:text-accent transition-all group-hover:translate-x-1">
+                                    Yazıyı Oku 
+                                    <i class="fa-solid fa-arrow-right-long ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                `;
+                
+                // HTML'i string'den elemente çevirip eklemek yerine direkt innerHTML'e ekliyoruz (basitlik için)
+                blogGrid.innerHTML += cardHTML;
+            });
+        }
+
+        /* ================================================================
+           3. BAŞLATMA
+           ================================================================
+        */
+        
+        // Eğer veriler yerel diziden geliyorsa:
+        document.addEventListener('DOMContentLoaded', () => {
+             renderPosts(blogPosts);
+        });
+
+        // EĞER API KULLANACAKSANIZ (Örnek Fetch Kodu):
+        /*
+        async function fetchMyPosts() {
+            try {
+                const response = await fetch('data.json'); // veya API URL'iniz
+                const data = await response.json();
+                renderPosts(data);
+            } catch (error) {
+                console.error('Veri çekme hatası:', error);
+            }
+        }
+        // fetchMyPosts();
+        */
+
+    </script>
 </body>
 </html>
